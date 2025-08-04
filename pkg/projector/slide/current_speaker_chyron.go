@@ -46,7 +46,6 @@ func CurrentSpeakerChyronSlideHandler(ctx context.Context, req *projectionReques
 
 	slideSpeakerName := ""
 	slideStructureLevel := ""
-	slideAgendaItem := ""
 	if currentSpeaker != nil {
 		speakerName, err := viewmodels.Speaker_FullName(ctx, currentSpeaker)
 		if err != nil {
@@ -87,16 +86,15 @@ func CurrentSpeakerChyronSlideHandler(ctx context.Context, req *projectionReques
 		}
 	}
 
-	// TODO: Also include agenda item number and number
-	// coTitle := los.ContentObject().Get("title")
-	// if coTitle != nil {
-	// agendaItem = coTitle.(string)
-	// }
+	titleInfo, err := viewmodels.GetTitleInformationByContentObject(ctx, req.Fetch, los.ContentObjectID)
+	if err != nil {
+		return nil, fmt.Errorf("could not load los title info %w", err)
+	}
 
 	return map[string]any{
-		"Options":        options,
-		"SpeakerName":    slideSpeakerName,
-		"StructureLevel": slideStructureLevel,
-		"AgendaItem":     slideAgendaItem,
+		"Options":          options,
+		"SpeakerName":      slideSpeakerName,
+		"StructureLevel":   slideStructureLevel,
+		"TitleInformation": titleInfo,
 	}, nil
 }
