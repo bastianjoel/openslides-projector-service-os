@@ -6,9 +6,33 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/OpenSlides/openslides-go/datastore/dsmodels"
 	"github.com/OpenSlides/openslides-projector-service/pkg/viewmodels"
 	"github.com/shopspring/decimal"
 )
+
+func formatDecimalAsString(value decimal.Decimal) string {
+	return value.Round(3).String()
+}
+
+func calculatePercent(value decimal.Decimal, base decimal.Decimal) string {
+	if base.IsZero() {
+		return ""
+	}
+	percent := value.Div(base).Mul(decimal.NewFromInt(100))
+	return formatDecimalAsString(percent)
+}
+
+func shouldDisplayPercent(poll dsmodels.Poll, voteType string) bool {
+	base := poll.OnehundredPercentBase
+	if base == "disabled" {
+		return false
+	}
+	if base == "cast" || base == "valid" {
+		return true
+	}
+	return strings.Contains(base, voteType)
+}
 
 type pollSlideOptions struct {
 	SingleVotes bool `json:"single_votes"`

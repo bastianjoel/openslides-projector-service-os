@@ -20,13 +20,13 @@
             <div class="bg-abstain" style="flex: {{ .NumNotVoted }} 0 auto"></div>
           {{ end }}
         {{ else }}
-          {{ if .Data.TotalYes.IsPositive }}
+          {{ if and (ne .Data.TotalYes "0") (ne .Data.TotalYes "") }}
             <div class="bg-yes" style="flex: {{ .Data.TotalYes }} 0 auto"></div>
           {{ end }}
-          {{ if .Data.TotalNo.IsPositive }}
+          {{ if and (ne .Data.TotalNo "0") (ne .Data.TotalNo "") }}
             <div class="bg-no" style="flex: {{ .Data.TotalNo }} 0 auto"></div>
           {{ end }}
-          {{ if and .Data.TotalAbstain.IsPositive (ne .Poll.OnehundredPercentBase "YN") }}
+          {{ if and (and (ne .Data.TotalAbstain "0") (ne .Data.TotalAbstain "")) (ne .Poll.OnehundredPercentBase "YN") }}
             <div class="bg-abstain" style="flex: {{ .Data.TotalAbstain }} 0 auto"></div>
           {{ end }}
         {{ end }}

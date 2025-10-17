@@ -58,10 +58,10 @@ func (e *pollSingleVotesSlideVoteEntryGroup) TotalAbstain() int {
 }
 
 type pollSingleVotesSlideData struct {
-	TotalYes        decimal.Decimal
-	TotalNo         decimal.Decimal
-	TotalAbstain    decimal.Decimal
-	TotalVotesvalid decimal.Decimal
+	TotalYes        string
+	TotalNo         string
+	TotalAbstain    string
+	TotalVotesvalid string
 	PercYes         string
 	PercNo          string
 	PercAbstain     string
@@ -177,16 +177,16 @@ func pollSingleVotesSlideHandler(ctx context.Context, req *projectionRequest) (m
 	}
 
 	slideData.GroupedVotes = voteEntryGroups
-	slideData.TotalYes = pollOption.Yes
-	slideData.TotalNo = pollOption.No
-	slideData.TotalAbstain = pollOption.Abstain
-	slideData.TotalVotesvalid = poll.Votesvalid
+	slideData.TotalYes = formatDecimalAsString(pollOption.Yes)
+	slideData.TotalNo = formatDecimalAsString(pollOption.No)
+	slideData.TotalAbstain = formatDecimalAsString(pollOption.Abstain)
+	slideData.TotalVotesvalid = formatDecimalAsString(poll.Votesvalid)
 	onehundredPercentBase := viewmodels.Poll_OneHundredPercentBase(poll, nil)
 	if !onehundredPercentBase.IsZero() {
-		slideData.PercYes = calculatePercent(slideData.TotalYes, onehundredPercentBase)
-		slideData.PercNo = calculatePercent(slideData.TotalNo, onehundredPercentBase)
-		slideData.PercAbstain = calculatePercent(slideData.TotalAbstain, onehundredPercentBase)
-		slideData.PercVotesvalid = calculatePercent(slideData.TotalVotesvalid, onehundredPercentBase)
+		slideData.PercYes = calculatePercent(pollOption.Yes, onehundredPercentBase)
+		slideData.PercNo = calculatePercent(pollOption.No, onehundredPercentBase)
+		slideData.PercAbstain = calculatePercent(pollOption.Abstain, onehundredPercentBase)
+		slideData.PercVotesvalid = calculatePercent(poll.Votesvalid, onehundredPercentBase)
 	}
 
 	return map[string]any{
