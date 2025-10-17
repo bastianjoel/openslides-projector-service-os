@@ -47,7 +47,7 @@
               </td>
               {{ if $.Methods.Yes }}
                 {{ if eq $o.TotalYes "majority" }}
-                  <td colspan="2" class="result yes">majority</td>
+                  <td colspan="2" class="result yes">{{ Loc.Get "majority" }}</td>
                 {{ else }}
                   <td class="result yes">
                     {{ if ne $.Base "disabled" }}
@@ -61,7 +61,7 @@
               {{ end }}
               {{ if $.Methods.No }}
                 {{ if eq $o.TotalNo "majority" }}
-                  <td colspan="2" class="result no">majority</td>
+                  <td colspan="2" class="result no">{{ Loc.Get "majority" }}</td>
                 {{ else }}
                   <td class="result {{ if eq $.Method "N" }}yes{{ else }}no{{ end }}">
                     {{ if ne $.Base "disabled" }}
@@ -75,7 +75,7 @@
               {{ end }}
               {{ if $.Methods.Abstain }}
                 {{ if eq $o.TotalAbstain "majority" }}
-                  <td colspan="2" class="result abstain">majority</td>
+                  <td colspan="2" class="result abstain">{{ Loc.Get "majority" }}</td>
                 {{ else }}
                   <td class="result abstain">
                     {{ if and $.Data.DisplayPercAbstain (ne $.Base "disabled") }}
