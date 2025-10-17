@@ -19,9 +19,9 @@ type pollSlideTableOption struct {
 	TotalYes     decimal.Decimal
 	TotalNo      decimal.Decimal
 	TotalAbstain decimal.Decimal
-	PercYes      decimal.Decimal
-	PercNo       decimal.Decimal
-	PercAbstain  decimal.Decimal
+	PercYes      string
+	PercNo       string
+	PercAbstain  string
 }
 
 type pollSlideTableSum struct {
@@ -115,17 +115,15 @@ func PollSlideHandler(ctx context.Context, req *projectionRequest) (map[string]a
 		}
 
 		if !onehundredPercentBase.IsZero() {
-			optData.PercYes = optData.TotalYes.DivRound(onehundredPercentBase, 5).Mul(decimal.NewFromInt(100))
-			optData.PercNo = optData.TotalNo.DivRound(onehundredPercentBase, 5).Mul(decimal.NewFromInt(100))
-			optData.PercAbstain = optData.TotalAbstain.DivRound(onehundredPercentBase, 5).Mul(decimal.NewFromInt(100))
+			optData.PercYes = calculatePercent(optData.TotalYes, onehundredPercentBase)
+			optData.PercNo = calculatePercent(optData.TotalNo, onehundredPercentBase)
+			optData.PercAbstain = calculatePercent(optData.TotalAbstain, onehundredPercentBase)
 		}
 
 		data.Options = append(data.Options, optData)
 	}
 
-	data.DisplayPercAbstain = strings.Contains(poll.OnehundredPercentBase, "A") ||
-		poll.OnehundredPercentBase == "cast" ||
-		poll.OnehundredPercentBase == "valid"
+	data.DisplayPercAbstain = shouldDisplayPercent(poll, "A")
 
 	pollMethod := map[string]bool{
 		"Yes":     strings.Contains(poll.Pollmethod, "Y"),
@@ -179,7 +177,7 @@ func PollSlideHandler(ctx context.Context, req *projectionRequest) (map[string]a
 	onehundredPercentBase := viewmodels.Poll_OneHundredPercentBase(poll, nil)
 	if !onehundredPercentBase.IsZero() {
 		for i, sum := range data.Sums {
-			data.Sums[i].Perc = sum.Total.Div(onehundredPercentBase).Mul(decimal.NewFromInt(100)).Round(3).String()
+			data.Sums[i].Perc = calculatePercent(sum.Total, onehundredPercentBase)
 		}
 	}
 
