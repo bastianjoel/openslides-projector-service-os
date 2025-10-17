@@ -11,38 +11,15 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-func formatDecimalAsString(value decimal.Decimal) string {
-	return value.Round(3).String()
-}
-
-func calculatePercent(value decimal.Decimal, base decimal.Decimal) string {
-	if base.IsZero() {
-		return ""
-	}
-	percent := value.Div(base).Mul(decimal.NewFromInt(100))
-	return formatDecimalAsString(percent)
-}
-
-func shouldDisplayPercent(poll dsmodels.Poll, voteType string) bool {
-	base := poll.OnehundredPercentBase
-	if base == "disabled" {
-		return false
-	}
-	if base == "cast" || base == "valid" {
-		return true
-	}
-	return strings.Contains(base, voteType)
-}
-
 type pollSlideOptions struct {
 	SingleVotes bool `json:"single_votes"`
 }
 
 type pollSlideTableOption struct {
 	Name         string
-	TotalYes     decimal.Decimal
-	TotalNo      decimal.Decimal
-	TotalAbstain decimal.Decimal
+	TotalYes     string
+	TotalNo      string
+	TotalAbstain string
 	PercYes      string
 	PercNo       string
 	PercAbstain  string
@@ -133,15 +110,15 @@ func PollSlideHandler(ctx context.Context, req *projectionRequest) (map[string]a
 
 		optData := pollSlideTableOption{
 			Name:         name,
-			TotalYes:     option.Yes,
-			TotalNo:      option.No,
-			TotalAbstain: option.Abstain,
+			TotalYes:     formatVoteValue(option.Yes),
+			TotalNo:      formatVoteValue(option.No),
+			TotalAbstain: formatVoteValue(option.Abstain),
 		}
 
 		if !onehundredPercentBase.IsZero() {
-			optData.PercYes = calculatePercent(optData.TotalYes, onehundredPercentBase)
-			optData.PercNo = calculatePercent(optData.TotalNo, onehundredPercentBase)
-			optData.PercAbstain = calculatePercent(optData.TotalAbstain, onehundredPercentBase)
+			optData.PercYes = calculatePercent(option.Yes, onehundredPercentBase)
+			optData.PercNo = calculatePercent(option.No, onehundredPercentBase)
+			optData.PercAbstain = calculatePercent(option.Abstain, onehundredPercentBase)
 		}
 
 		data.Options = append(data.Options, optData)
@@ -228,4 +205,34 @@ func PollSlideHandler(ctx context.Context, req *projectionRequest) (map[string]a
 		"Method":      poll.Pollmethod,
 		"Methods":     pollMethod,
 	}, nil
+}
+
+func formatDecimalAsString(value decimal.Decimal) string {
+	return value.Round(3).String()
+}
+
+func formatVoteValue(value decimal.Decimal) string {
+	if value.IsNegative() {
+		return "majority"
+	}
+	return formatDecimalAsString(value)
+}
+
+func calculatePercent(value decimal.Decimal, base decimal.Decimal) string {
+	if base.IsZero() {
+		return ""
+	}
+	percent := value.Div(base).Mul(decimal.NewFromInt(100))
+	return formatDecimalAsString(percent)
+}
+
+func shouldDisplayPercent(poll dsmodels.Poll, voteType string) bool {
+	base := poll.OnehundredPercentBase
+	if base == "disabled" {
+		return false
+	}
+	if base == "cast" || base == "valid" {
+		return true
+	}
+	return strings.Contains(base, voteType)
 }

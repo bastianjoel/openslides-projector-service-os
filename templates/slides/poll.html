@@ -46,7 +46,7 @@
                 </div>
               </td>
               {{ if $.Methods.Yes }}
-                {{ if $o.TotalYes.IsNegative }}
+                {{ if eq $o.TotalYes "majority" }}
                   <td colspan="2" class="result yes">majority</td>
                 {{ else }}
                   <td class="result yes">
@@ -60,7 +60,7 @@
                 {{ end }}
               {{ end }}
               {{ if $.Methods.No }}
-                {{ if $o.TotalNo.IsNegative }}
+                {{ if eq $o.TotalNo "majority" }}
                   <td colspan="2" class="result no">majority</td>
                 {{ else }}
                   <td class="result {{ if eq $.Method "N" }}yes{{ else }}no{{ end }}">
@@ -74,7 +74,7 @@
                 {{ end }}
               {{ end }}
               {{ if $.Methods.Abstain }}
-                {{ if $o.TotalAbstain.IsNegative }}
+                {{ if eq $o.TotalAbstain "majority" }}
                   <td colspan="2" class="result abstain">majority</td>
                 {{ else }}
                   <td class="result abstain">
