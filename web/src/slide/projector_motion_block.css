@@ -6,9 +6,9 @@
   .column-item {
     display: flex;
     align-items: flex-start;
-    margin-bottom: 0.4em;
+    margin-bottom: 0.5625em;
     .motion-number {
-      font-size: 0.9em;
+      font-size: 1.25em;
       white-space: nowrap;
       margin-right: 12px;
       font-weight: 500;
@@ -22,7 +22,7 @@
       max-width: 100%;
       .label {
         display: inline-block;
-        font-size: 0.9em;
+        font-size: 1.25em;
         font-weight: 500;
         border-radius: 5px;
         padding: 0px 8px;
@@ -34,7 +34,7 @@
       }
     }
     .motion-title {
-      font-size: 0.7em;
+      font-size: 0.9375em;
       font-weight: 300;
       display: var(--title-display, block);
       white-space: nowrap;
